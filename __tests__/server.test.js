@@ -100,3 +100,30 @@ describe('GET /api/weather', () => {
     expect(res.body.error).toBe('Failed to fetch weather data');
   });
 });
+
+describe('GET /api/diagnostics', () => {
+  test('returns 400 when command is missing', async () => {
+    const res = await request(app).get('/api/diagnostics');
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe('command query parameter is required');
+  });
+
+  test('returns 400 when command is empty', async () => {
+    const res = await request(app).get('/api/diagnostics?command=');
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe('command query parameter is required');
+  });
+
+  test('returns 400 when command is not allowed', async () => {
+    const res = await request(app).get('/api/diagnostics?command=rm');
+    expect(res.status).toBe(400);
+    expect(res.body.error).toMatch(/Unknown command/);
+  });
+
+  test('returns output for an allowed command', async () => {
+    const res = await request(app).get('/api/diagnostics?command=uptime');
+    expect(res.status).toBe(200);
+    expect(res.body.command).toBe('uptime');
+    expect(typeof res.body.output).toBe('string');
+  });
+});
