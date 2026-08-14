@@ -24,20 +24,33 @@
         const city = document.getElementById('city').value;
         result.textContent = 'Loading...';
 
-        const response = await fetch(`/api/weather?city=${encodeURIComponent(city)}`);
-        const data = await response.json();
+        try {
+          const response = await fetch(`/api/weather?city=${encodeURIComponent(city)}`);
+          const data = await response.json();
 
-        if (!response.ok) {
-          result.textContent = data.error || 'Unable to fetch weather';
-          return;
+          if (!response.ok) {
+            result.textContent = data.error || 'Unable to fetch weather';
+            return;
+          }
+
+          result.innerHTML = '';
+
+          const cityHeading = document.createElement('h2');
+          cityHeading.textContent = data.city;
+
+          const temperature = document.createElement('p');
+          temperature.textContent = `Temperature: ${data.temperature}${data.temperatureUnit}`;
+
+          const conditions = document.createElement('p');
+          conditions.textContent = `Conditions: ${data.conditions}`;
+
+          const windSpeed = document.createElement('p');
+          windSpeed.textContent = `Wind speed: ${data.windSpeed} ${data.windSpeedUnit}`;
+
+          result.append(cityHeading, temperature, conditions, windSpeed);
+        } catch (error) {
+          result.textContent = 'Unable to fetch weather';
         }
-
-        result.innerHTML = `
-          <h2>${data.city}</h2>
-          <p>Temperature: ${data.temperature}°C</p>
-          <p>Conditions: ${data.conditions}</p>
-          <p>Wind speed: ${data.windSpeed} km/h</p>
-        `;
       });
     </script>
   </body>

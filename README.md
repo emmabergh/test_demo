@@ -21,7 +21,9 @@ Example response:
 {
   "city": "London",
   "temperature": 22.1,
+  "temperatureUnit": "°C",
   "conditions": "Partly cloudy",
-  "windSpeed": 14.2
+  "windSpeed": 14.2,
+  "windSpeedUnit": "km/h"
 }
 ```
