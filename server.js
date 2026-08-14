@@ -104,6 +104,10 @@ app.get('/api/weather', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Weather app listening on port ${port}`);
-});
+if (require.main === module) {
+  app.listen(port, () => {
+    console.log(`Weather app listening on port ${port}`);
+  });
+}
+
+module.exports = app;
