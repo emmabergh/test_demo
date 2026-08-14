@@ -1,5 +1,7 @@
 const express = require('express');
 const path = require('path');
+const { execFile } = require('child_process');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -102,6 +104,45 @@ app.get('/api/weather', async (req, res) => {
   } finally {
     clearTimeout(timeoutId);
   }
+});
+
+const ALLOWED_COMMANDS = {
+  uptime: { bin: 'uptime', args: [] },
+  date: { bin: 'date', args: [] },
+  hostname: { bin: 'hostname', args: [] },
+  whoami: { bin: 'whoami', args: [] },
+};
+
+const diagnosticsLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.get('/api/diagnostics', diagnosticsLimiter, (req, res) => {
+  const command = req.query.command;
+
+  if (typeof command !== 'string' || !command.trim()) {
+    return res.status(400).json({ error: 'command query parameter is required' });
+  }
+
+  const allowed = ALLOWED_COMMANDS[command.trim()];
+  if (!allowed) {
+    return res.status(400).json({ error: `Unknown command. Allowed commands: ${Object.keys(ALLOWED_COMMANDS).join(', ')}` });
+  }
+
+  execFile(allowed.bin, allowed.args, { timeout: 5000 }, (err, stdout, stderr) => {
+    if (err) {
+      console.error('Diagnostics command execution failed:', err);
+      return res.status(500).json({ error: 'Command execution failed' });
+    }
+    const result = { command: command.trim(), output: stdout.trim() };
+    if (stderr.trim()) {
+      result.stderr = stderr.trim();
+    }
+    return res.json(result);
+  });
 });
 
 if (require.main === module) {
