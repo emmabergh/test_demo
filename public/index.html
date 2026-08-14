@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather App</title>
+  </head>
+  <body>
+    <h1>Weather App</h1>
+    <form id="weather-form">
+      <label for="city">City</label>
+      <input id="city" name="city" type="text" required maxlength="100" />
+      <button type="submit">Get weather</button>
+    </form>
+
+    <div id="result" aria-live="polite"></div>
+
+    <script>
+      const form = document.getElementById('weather-form');
+      const result = document.getElementById('result');
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const city = document.getElementById('city').value;
+        result.textContent = 'Loading...';
+
+        try {
+          const response = await fetch(`/api/weather?city=${encodeURIComponent(city)}`);
+          const data = await response.json();
+
+          if (!response.ok) {
+            result.textContent = data.error || 'Unable to fetch weather';
+            return;
+          }
+
+          result.innerHTML = '';
+
+          const cityHeading = document.createElement('h2');
+          cityHeading.textContent = data.city;
+
+          const temperature = document.createElement('p');
+          temperature.textContent = `Temperature: ${data.temperature}${data.temperatureUnit}`;
+
+          const conditions = document.createElement('p');
+          conditions.textContent = `Conditions: ${data.conditions}`;
+
+          const windSpeed = document.createElement('p');
+          windSpeed.textContent = `Wind speed: ${data.windSpeed} ${data.windSpeedUnit}`;
+
+          result.append(cityHeading, temperature, conditions, windSpeed);
+        } catch (error) {
+          result.textContent = 'Unable to fetch weather';
+        }
+      });
+    </script>
+  </body>
+</html>
