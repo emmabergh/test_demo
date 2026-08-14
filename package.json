@@ -9,8 +9,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "http://localhost:26831/emmabergh/test_demo"
-  },
+    "url": "git+https://github.com/emmabergh/test_demo.git"
+  }
   "keywords": [],
   "author": "",
   "license": "ISC",
