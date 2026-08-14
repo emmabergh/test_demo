@@ -36,7 +36,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/api/weather', async (req, res) => {
   const city = req.query.city;
 
-  if (!city || !city.trim()) {
+  if (typeof city !== 'string' || !city.trim()) {
     return res.status(400).json({ error: 'City query parameter is required' });
   }
 
