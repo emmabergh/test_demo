@@ -5,12 +5,13 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "echo \"No tests specified\""
+    "test": "jest",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/emmabergh/test_demo.git"
-  }
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -19,5 +20,11 @@
   },
   "dependencies": {
     "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.8.1",
+    "jest": "^30.4.2",
+    "supertest": "^7.2.2"
   }
 }

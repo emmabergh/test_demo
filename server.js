@@ -93,7 +93,7 @@ app.get('/api/weather', async (req, res) => {
       temperatureUnit: currentUnits.temperature_2m || '°C',
       windSpeedUnit: currentUnits.wind_speed_10m || 'km/h'
     });
-  } catch (error) {
+  } catch (_error) {
     if (abortController.signal.aborted && abortController.signal.reason?.name === 'TimeoutError') {
       return res.status(504).json({ error: 'Weather service timed out' });
     }
